@@ -1,9 +1,10 @@
 """
-Discrete Soft Actor-Critic with LSTM Encoder — baseline for comparison.
+Discrete Soft Actor-Critic with LSTM Encoder — recurrent baseline.
 
-Mirrors the architecture and hyperparameters of sac_agent.py (SAC-LFM)
-but replaces the Liquid Foundation Model encoder with a standard LSTM,
-isolating the contribution of the LFM from the SAC algorithm itself.
+Uses a standard multi-layer LSTM as the sequence encoder, providing a strong
+recurrent baseline for comparison against SAC-LTC (proposed). The LSTM's
+fixed sigmoid forget gates contrast with LTC's input-dependent time
+constants, isolating the contribution of adaptive temporal dynamics.
 """
 
 import copy

@@ -1,12 +1,12 @@
 """
-Benchmarking harness for SAC-LFM vs. SOTA baselines.
+Benchmarking harness for SAC-LTC vs. baselines (SAC-LFM, SAC-LSTM, PPO-LSTM).
 
 Orchestrates multi-seed training, evaluation, and metric logging
 following NeurIPS/ICLR reproducibility standards.
 
 Usage:
     python benchmark.py --config benchmark_config.yaml
-    python benchmark.py --config benchmark_config.yaml --agents sac_lfm sac_lstm
+    python benchmark.py --config benchmark_config.yaml --agents sac_ltc sac_lfm
     python benchmark.py --config benchmark_config.yaml --eval-only
 """
 

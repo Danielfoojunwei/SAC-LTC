@@ -1,8 +1,9 @@
 """
-Evaluation and Visualisation for the trained SAC-LFM DSA agent.
+Evaluation and Visualisation for trained SAC-LTC / SAC-LFM DSA agents.
 
 Usage:
-    python evaluate.py --checkpoint results/checkpoint_final.pt [--num_episodes 100]
+    python evaluate.py --checkpoint results/checkpoint_final.pt [--agent sac_ltc]
+    python evaluate.py --checkpoint results/checkpoint_final.pt --agent sac_lfm
 
 Produces:
   1. Console metrics (success rate, collision rate, average reward).
@@ -25,7 +26,10 @@ from sac_agent import SACAgent
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Evaluate SAC-LFM on DSA environment")
+    p = argparse.ArgumentParser(description="Evaluate SAC-LTC/SAC-LFM on DSA environment")
+    p.add_argument("--agent", type=str, default="sac_ltc",
+                   choices=["sac_ltc", "sac_lfm"],
+                   help="Agent type: sac_ltc (proposed) or sac_lfm (baseline)")
     p.add_argument("--checkpoint", type=str, required=True, help="Path to .pt checkpoint")
     p.add_argument("--curves", type=str, default=None,
                    help="Path to training_curves.json (auto-detected if omitted)")
@@ -122,7 +126,7 @@ def plot_learning_curve(curves_path: str, output_path: str):
                 markersize=4, label="Evaluation")
     ax.set_xlabel("Training Step")
     ax.set_ylabel("Mean Episode Reward")
-    ax.set_title("SAC-LFM  —  Learning Curve")
+    ax.set_title("SAC-LTC  —  Learning Curve")
     ax.legend()
     ax.grid(True, alpha=0.3)
 

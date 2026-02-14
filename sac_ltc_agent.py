@@ -1,20 +1,37 @@
 """
-Discrete Soft Actor-Critic with Liquid Time-Constant (LTC) Network Encoder.
+SAC-LTC: Discrete Soft Actor-Critic with Liquid Time-Constant Network Encoder.
+=============================================================================
 
-Implements SAC for discrete action spaces using the LTC neural network
-architecture from Hasani et al. "Liquid Time-constant Networks" (AAAI 2021).
+**Proposed method.** Combines the off-policy sample efficiency of SAC with
+the adaptive temporal dynamics of Liquid Time-Constant (LTC) networks
+for Dynamic Spectrum Access in cognitive radio.
 
-LTC cells model continuous-time dynamics with input-dependent time constants:
-    τ(x) · dh/dt = -h + f(x, h)
+Canonical derivation
+--------------------
+LTC cells (Hasani et al., AAAI 2021) model continuous-time dynamics with
+input-dependent time constants via the neural ODE:
 
-Discretised via an ODE step:
-    h_{t+1} = h_t + (Δt / τ(x_t)) · (-h_t + f(x_t, h_t))
+    τ(x) · dh/dt = −h + f(x, h)                               ... (1)
 
-where τ(x) = τ_base + softplus(W_τ · x + b_τ)  ensures positive time constants,
-and f(x, h) = tanh(W_h · h + W_x · x + b) is a nonlinear activation.
+where
+    f(x, h) = tanh(W_h · h + W_x · x + b)                     ... (2)
+    τ(x)    = τ_base + softplus(W_τ · x + b_τ)    (> 0)       ... (3)
 
-This isolates the contribution of the LTC recurrence from the SAC algorithm
-for direct comparison against LFM, LSTM, and PPO-LSTM baselines.
+Discretising (1) with a forward Euler step of size Δt:
+
+    h_{t+1} = h_t + (Δt / τ(x_t)) · (−h_t + f(x_t, h_t))     ... (4)
+
+Key insight for DSA
+-------------------
+PU channel occupancy follows continuous-time Markov chains with
+heterogeneous transition rates. The input-dependent time constant τ(x)
+allows the network to:
+  - Decrease τ when channel dynamics are volatile  → fast integration
+  - Increase τ when channels are stable            → long-term memory
+
+This adaptive temporal resolution is the core advantage over:
+  - LSTM: fixed sigmoid forget gates (no input-dependent time constants)
+  - LFM:  attention-based discrete-time mixing (no continuous-time ODE)
 """
 
 import copy
@@ -205,13 +222,21 @@ class LTCCritic(nn.Module):
 
 class SACLTCAgent:
     """
-    Discrete SAC with Liquid Time-Constant encoder — same algorithm
-    as SACAgent and SACLSTMAgent, different feature extractor.
+    SAC-LTC: Discrete SAC with Liquid Time-Constant encoder (proposed method).
 
-    The LTC recurrence provides input-dependent time constants that
-    allow the network to adaptively control the speed at which it
-    integrates information, making it well-suited for the varying
-    dynamics of primary-user channel occupancy patterns.
+    The same discrete SAC algorithm (Christodoulou 2019) as the LFM and LSTM
+    baselines, but with an LTC encoder that provides:
+
+      1. Input-dependent time constants τ(x) for adaptive temporal integration
+      2. Continuous-time ODE dynamics matching PU Markov process structure
+      3. Stable linear attractor (−h + f) ensuring bounded hidden state dynamics
+      4. Learnable τ_base floor preventing time-constant collapse
+
+    Architecture:
+        Actor:  LTCEncoder → softmax policy head  π(a|s)
+        Critic: 2× LTCEncoder → Q-value heads     Q₁(s,·), Q₂(s,·)
+        Target: Polyak-averaged critic copies
+        Alpha:  Automatic entropy coefficient tuning
     """
 
     def __init__(

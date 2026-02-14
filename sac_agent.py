@@ -1,5 +1,10 @@
 """
-Discrete Soft Actor-Critic (SAC) Agent with LFM Encoder.
+Discrete Soft Actor-Critic (SAC) Agent with LFM Encoder — attention baseline.
+
+Serves as an attention-based baseline for comparison against SAC-LTC (proposed).
+Uses the Liquid Foundation Model (LFM) encoder with adaptive gating and
+multi-head self-attention for temporal mixing, providing parallel sequence
+processing but lacking explicit continuous-time dynamics.
 
 Implements SAC for discrete action spaces following the formulation
 from Christodoulou (2019) "Soft Actor-Critic for Discrete Action Settings".

@@ -1,5 +1,5 @@
 """
-Publication-quality visualisation for SAC-LFM benchmark results.
+Publication-quality visualisation for SAC-LTC benchmark results.
 
 Reads per-run training curves and eval metrics from the benchmark output
 directory and produces:
@@ -26,9 +26,10 @@ from matplotlib.ticker import MaxNLocator
 
 # ---- Consistent publication style ----
 AGENT_STYLES = {
-    "sac_lfm":  {"color": "#2563eb", "label": "SAC-LFM (Ours)", "ls": "-",  "marker": "o"},
-    "sac_lstm": {"color": "#dc2626", "label": "SAC-LSTM",        "ls": "--", "marker": "s"},
-    "ppo_lstm": {"color": "#16a34a", "label": "PPO-LSTM",        "ls": "-.", "marker": "^"},
+    "sac_ltc":  {"color": "#7c3aed", "label": "SAC-LTC (Ours)",  "ls": "-",  "marker": "D"},
+    "sac_lfm":  {"color": "#2563eb", "label": "SAC-LFM",         "ls": "--", "marker": "o"},
+    "sac_lstm": {"color": "#dc2626", "label": "SAC-LSTM",        "ls": "-.", "marker": "s"},
+    "ppo_lstm": {"color": "#16a34a", "label": "PPO-LSTM",        "ls": ":",  "marker": "^"},
 }
 DEFAULT_STYLE = {"color": "#6b7280", "label": "Unknown", "ls": ":", "marker": "x"}
 
@@ -295,11 +296,11 @@ def plot_ablation(
     output_path: str,
 ):
     """
-    If multiple SAC-LFM variants are present (e.g. sac_lfm_blocks1,
-    sac_lfm_blocks2, ...) plot an ablation chart.
+    If multiple SAC-LTC variants are present (e.g. sac_ltc_layers1,
+    sac_ltc_layers2, ...) plot an ablation chart.
     Falls back to a comparison of all agents if no ablation data exists.
     """
-    ablation_agents = {k: v for k, v in eval_data.items() if k.startswith("sac_lfm")}
+    ablation_agents = {k: v for k, v in eval_data.items() if k.startswith("sac_ltc")}
     if len(ablation_agents) <= 1:
         # No ablation variants — plot reward distribution comparison instead
         fig, ax = plt.subplots(figsize=(8, 5))
@@ -351,10 +352,10 @@ def plot_ablation(
 
     ax.errorbar(block_counts, mean_rewards, yerr=std_rewards,
                 fmt="o-", capsize=5, linewidth=2, markersize=8,
-                color=_style("sac_lfm")["color"])
-    ax.set_xlabel("Number of Liquid Blocks", fontsize=11)
+                color=_style("sac_ltc")["color"])
+    ax.set_xlabel("Number of LTC Layers", fontsize=11)
     ax.set_ylabel("Mean Reward", fontsize=11)
-    ax.set_title("Ablation: LFM Depth", fontsize=12)
+    ax.set_title("Ablation: LTC Depth", fontsize=12)
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax.grid(True, alpha=0.25)
 
@@ -369,7 +370,7 @@ def plot_ablation(
 # ======================================================================
 
 def main():
-    parser = argparse.ArgumentParser(description="Visualise SAC-LFM benchmark results")
+    parser = argparse.ArgumentParser(description="Visualise SAC-LTC benchmark results")
     parser.add_argument("--results_dir", type=str, default="benchmark_results")
     parser.add_argument("--output_dir", type=str, default=None,
                         help="Directory for plots (defaults to results_dir/figures)")

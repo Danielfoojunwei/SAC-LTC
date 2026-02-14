@@ -1,5 +1,5 @@
 # ============================================================
-# SAC-LFM Benchmarking Configuration
+# SAC-LTC Benchmarking Configuration
 # NeurIPS / ICLR reproducibility standard
 # ============================================================
 
@@ -28,6 +28,22 @@ environment:
 
 # Agent configurations — matched hyperparameters for fair comparison
 agents:
+  # Proposed method
+  sac_ltc:
+    class: "sac_ltc"
+    params:
+      hidden_dim: 128
+      latent_dim: 128
+      num_layers: 2
+      dt: 1.0
+      lr: 3.0e-4
+      gamma: 0.99
+      tau: 0.005
+      buffer_size: 100_000
+      batch_size: 256
+      learning_starts: 1000
+
+  # Baseline: attention-based (LFM)
   sac_lfm:
     class: "sac_lfm"
     params:
@@ -42,6 +58,7 @@ agents:
       batch_size: 256
       learning_starts: 1000
 
+  # Baseline: recurrent (LSTM)
   sac_lstm:
     class: "sac_lstm"
     params:
@@ -55,6 +72,7 @@ agents:
       batch_size: 256
       learning_starts: 1000
 
+  # Baseline: on-policy (PPO-LSTM)
   ppo_lstm:
     class: "ppo_lstm"
     params:
