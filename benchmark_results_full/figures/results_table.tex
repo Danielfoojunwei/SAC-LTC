@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering
+\caption{Benchmark results (mean $\pm$ std over 5 seeds).}
+\label{tab:benchmark}
+\begin{tabular}{lcccccc}
+\toprule
+Agent & Reward & Success Rate & Collision Rate & Spec. Eff. & Jain's FI & Latency (ms) \\
+\midrule
+SAC-LFM (Ours) & 35.8 {\scriptsize$\pm$ 2.4} & \textbf{62.73% {\scriptsize$\pm$ 0.56%}} & \textbf{37.27% {\scriptsize$\pm$ 0.56%}} & \textbf{0.627 {\scriptsize$\pm$ 0.006}} & \textbf{0.996 {\scriptsize$\pm$ 0.000}} & 1.28 {\scriptsize$\pm$ 0.05} \\
+SAC-LSTM & \textbf{50.0 {\scriptsize$\pm$ 1.9}} & 62.51% {\scriptsize$\pm$ 0.47%} & 37.49% {\scriptsize$\pm$ 0.47%} & 0.625 {\scriptsize$\pm$ 0.005} & 0.995 {\scriptsize$\pm$ 0.001} & \textbf{0.83 {\scriptsize$\pm$ 0.02}} \\
+PPO-LSTM & 49.5 {\scriptsize$\pm$ 1.3} & 62.62% {\scriptsize$\pm$ 0.55%} & 37.38% {\scriptsize$\pm$ 0.55%} & 0.626 {\scriptsize$\pm$ 0.005} & 0.995 {\scriptsize$\pm$ 0.000} & 4.11 {\scriptsize$\pm$ 0.06} \\
+\bottomrule
+\end{tabular}
+\end{table}
