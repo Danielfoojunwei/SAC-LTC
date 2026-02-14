@@ -64,6 +64,16 @@ def make_agent(agent_type: str, agent_params: dict, env_cfg: dict, device: torch
             **agent_params,
         )
 
+    elif agent_type == "sac_ltc":
+        from sac_ltc_agent import SACLTCAgent
+        return SACLTCAgent(
+            state_shape=state_shape,
+            num_actions=num_channels,
+            input_dim=input_dim,
+            device=device,
+            **agent_params,
+        )
+
     elif agent_type == "ppo_lstm":
         from ppo_lstm_agent import PPOLSTMAgent
         env_kwargs = {
@@ -325,7 +335,7 @@ def run_benchmark(config: dict, agent_filter: List[str] | None = None, eval_only
 
             # ---------- Training ----------
             if not eval_only:
-                if agent_type in ("sac_lfm", "sac_lstm"):
+                if agent_type in ("sac_lfm", "sac_lstm", "sac_ltc"):
                     env = DSAEnv(
                         num_channels=env_cfg["num_channels"],
                         sequence_length=env_cfg["sequence_length"],

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Quick full benchmark: 3 agents x 3 seeds x 5000 steps.
+Full benchmark: 4 agents x 3 seeds x 5000 steps.
 Runs sequentially, prints progress, generates summary.
 """
 import json
@@ -51,6 +51,21 @@ CONFIG = {
                 "learning_starts": 500,
             },
         },
+        "sac_ltc": {
+            "class": "sac_ltc",
+            "params": {
+                "hidden_dim": 64,
+                "latent_dim": 64,
+                "num_layers": 2,
+                "dt": 1.0,
+                "lr": 3e-4,
+                "gamma": 0.99,
+                "tau": 0.005,
+                "buffer_size": 50000,
+                "batch_size": 128,
+                "learning_starts": 500,
+            },
+        },
         "sac_lstm": {
             "class": "sac_lstm",
             "params": {
@@ -85,7 +100,7 @@ CONFIG = {
 
 
 def main():
-    output_root = "benchmark_results_full"
+    output_root = "benchmark_results_4agent"
     os.makedirs(output_root, exist_ok=True)
     device = torch.device("cpu")
 
@@ -123,7 +138,7 @@ def main():
             agent = make_agent(agent_type, agent_params, env_cfg, device)
 
             # Train
-            if agent_type in ("sac_lfm", "sac_lstm"):
+            if agent_type in ("sac_lfm", "sac_lstm", "sac_ltc"):
                 env = DSAEnv(
                     num_channels=env_cfg["num_channels"],
                     sequence_length=env_cfg["sequence_length"],
@@ -205,12 +220,12 @@ def main():
         json.dump(summary, f, indent=2)
 
     # ---- Print Table ----
-    print(f"\n{'='*90}", flush=True)
-    print(f"  EMPIRICAL PERFORMANCE BENCHMARK  (3 seeds × {CONFIG['training_steps']} steps)", flush=True)
-    print(f"{'='*90}", flush=True)
+    print(f"\n{'='*96}", flush=True)
+    print(f"  EMPIRICAL PERFORMANCE BENCHMARK  (3 seeds x {CONFIG['training_steps']} steps)", flush=True)
+    print(f"{'='*96}", flush=True)
     print(f"{'Agent':<12} {'Reward':>16} {'Success%':>12} {'Collision%':>12} "
           f"{'Spec.Eff':>10} {'Jain':>10} {'Infer(ms)':>12}", flush=True)
-    print(f"{'-'*90}", flush=True)
+    print(f"{'-'*96}", flush=True)
     for aname, m in summary.items():
         def f(key):
             d = m.get(key, {})
@@ -221,8 +236,8 @@ def main():
             f"{f('jain_fairness'):>10} {f('mean_inference_ms'):>12}",
             flush=True,
         )
-    print(f"{'='*90}", flush=True)
-    print(f"\nSummary saved → {output_root}/benchmark_summary.json", flush=True)
+    print(f"{'='*96}", flush=True)
+    print(f"\nSummary saved -> {output_root}/benchmark_summary.json", flush=True)
 
 
 if __name__ == "__main__":
